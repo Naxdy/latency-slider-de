@@ -45,12 +45,12 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
         if MOST_RECENT_AUTO == -1 {
             set_text_string(
                 CURRENT_PANE_HANDLE as u64,
-                format!("ROOM ID: {}\nInput Latency: Auto", CURRENT_ARENA_ID).as_ptr(),
+                format!("ROOM ID: {}\nInput Latency: Auto\0", CURRENT_ARENA_ID).as_ptr(),
             );
         } else {
             set_text_string(
                 CURRENT_PANE_HANDLE as u64,
-                format!("ROOM ID: {}\nInput Latency: Auto ({})", CURRENT_ARENA_ID, MOST_RECENT_AUTO).as_ptr()
+                format!("ROOM ID: {}\nInput Latency: Auto ({})\0", CURRENT_ARENA_ID, MOST_RECENT_AUTO).as_ptr()
             )
         }
     } else {
@@ -129,7 +129,7 @@ extern "C" {
 
 #[skyline::main(name = "arena-latency-slider")]
 pub fn main() {
-    if unsafe { (update_room_hook as *const ()).is_null() } {
+    // if unsafe { (update_room_hook as *const ()).is_null() } {
         skyline::install_hooks!(non_hdr_set_room_id, non_hdr_update_room_hook, non_hdr_set_online_latency, online_melee_any_scene_create, bg_matchmaking_seq, arena_seq, main_menu);
-    }
+    // }
 }
