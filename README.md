@@ -15,6 +15,8 @@ This is very problematic. It means that in any online situation, one player can 
 
 48ms is far less than the average human reaction time, for sure. However in vanilla Ultimate online, you are guaranteed a minimum of 10 frames of input delay: 2 frames from the game being triple buffered, 4 frames from the Nintendo Switch's input drivers being slow, and 4 frames as the bare minimum amount you can get online. When are dealing with a reference value of 10 frames, any single frame makes a big impact on both game feel and ability to react. This advantage is real, and will hurt competition.
 
+It is important to note, as much confusion has presented itself, that instead of the 10f base that you have in Vanilla Ultimate, you can now have a 7f base for input delay. The input slider value replaces the 4f provided by ultimate.
+
 # "How does it not lag?"
 This gets a little bit complex, but bare with me.
 
