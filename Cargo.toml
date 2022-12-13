@@ -1,0 +1,22 @@
+[package]
+name = "arena-latency-slider"
+version = "0.1.0"
+authors = []
+edition = "2021"
+
+[package.metadata.skyline]
+titleid = "01006A800016E000" # Smash Ultimate
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ninput = { git = "https://github.com/blu-dev/ninput", version = "0.1.0" }
+skyline = "0.2.0"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = true
