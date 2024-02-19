@@ -1,6 +1,6 @@
 [package]
 name = "arena-latency-slider"
-version = "0.1.0"
+version = "0.2.0"
 authors = []
 edition = "2021"
 
@@ -12,7 +12,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ninput = { git = "https://github.com/blu-dev/ninput", version = "0.1.0" }
-skyline = "0.2.0"
+skyline = "0.2.1"
 
 [profile.dev]
 panic = "abort"

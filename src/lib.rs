@@ -1,3 +1,5 @@
+#![feature(restricted_std)]
+
 use skyline::hooks::InlineCtx;
 
 #[skyline::from_offset(0x37a1270)]
