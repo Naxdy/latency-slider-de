@@ -2,7 +2,7 @@
 
 use skyline::hooks::InlineCtx;
 
-#[skyline::from_offset(0x37a1270)]
+#[skyline::from_offset(0x37a1ef0)]
 unsafe fn set_text_string(pane: u64, string: *const u8);
 
 static mut CURRENT_PANE_HANDLE: usize = 0;
@@ -14,7 +14,7 @@ static mut STEALTH_MODE: bool = false;
 const MAX_INPUT_BUFFER: isize = 25;
 const MIN_INPUT_BUFFER: isize = -1;
 
-#[skyline::hook(offset = 0x1887700, inline)]
+#[skyline::hook(offset = 0x18881d0, inline)]
 unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     static mut CURRENT_COUNTER: usize = 0;
     if ninput::any::is_press(ninput::Buttons::RIGHT) {
@@ -75,7 +75,7 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     }
 }
 
-#[skyline::hook(offset = 0x188702c, inline)]
+#[skyline::hook(offset = 0x1887afc, inline)]
 unsafe fn non_hdr_set_room_id(ctx: &skyline::hooks::InlineCtx) {
     let panel = *((*((*ctx.registers[0].x.as_ref() + 8) as *const u64) + 0x10) as *const u64);
     CURRENT_PANE_HANDLE = panel as usize;
@@ -86,36 +86,7 @@ unsafe fn non_hdr_set_room_id(ctx: &skyline::hooks::InlineCtx) {
     .unwrap());
 }
 
-#[skyline::hook(offset = 0x1a12460)]
-unsafe fn non_hdr_update_css2(arg: u64) {
-    static mut CURRENT_COUNTER: usize = 0;
-    if ninput::any::is_press(ninput::Buttons::X) {
-        if CURRENT_COUNTER == 0 {
-            CURRENT_INPUT_BUFFER += 1;
-        }
-        CURRENT_COUNTER = (CURRENT_COUNTER + 1) % 10;
-    } else if ninput::any::is_press(ninput::Buttons::Y) {
-        if CURRENT_COUNTER == 0 {
-            CURRENT_INPUT_BUFFER -= 1;
-        }
-        CURRENT_COUNTER = (CURRENT_COUNTER + 1) % 10;
-    } else {
-        CURRENT_COUNTER = 0;
-    }
-
-    CURRENT_INPUT_BUFFER = CURRENT_INPUT_BUFFER.clamp(MIN_INPUT_BUFFER, MAX_INPUT_BUFFER);
-    set_text_string(
-        *((*((arg + 0xe58) as *const u64) + 0x10) as *const u64),
-        format!("Input Latency: {}\0", CURRENT_INPUT_BUFFER).as_ptr(),
-    );
-    set_text_string(
-        *((*((arg + 0xe68) as *const u64) + 0x10) as *const u64),
-        format!("Input Latency: {}\0", CURRENT_INPUT_BUFFER).as_ptr(),
-    );
-    call_original!(arg)
-}
-
-#[skyline::hook(offset = 0x16cdb08, inline)]
+#[skyline::hook(offset = 0x16ccc58, inline)]
 unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
     let auto = *(*ctx.registers[19].x.as_ref() as *mut u8);
 
@@ -125,13 +96,11 @@ unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
     }
 }
 
-#[skyline::main(name = "arena-latency-slider")]
+#[skyline::main(name = "latency-slider-de")]
 pub fn main() {
-    // if unsafe { (update_room_hook as *const ()).is_null() } {
     skyline::install_hooks!(
         non_hdr_set_room_id,
         non_hdr_update_room_hook,
         non_hdr_set_online_latency,
     );
-    // }
 }
