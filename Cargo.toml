@@ -1,5 +1,5 @@
 [package]
-name = "arena-latency-slider"
+name = "latency-slider-de"
 version = "0.2.0"
 authors = []
 edition = "2021"
@@ -12,7 +12,10 @@ crate-type = ["cdylib"]
 
 [dependencies]
 ninput = { git = "https://github.com/blu-dev/ninput", version = "0.1.0" }
-skyline = "0.2.1"
+skyline_smash = { git = "https://github.com/jugeeya/skyline-smash.git", branch = "patch-2" }
+skyline = { git = "https://github.com/ultimate-research/skyline-rs.git" }
+paste = "1.0.14"
+lazy_static = "1.4.0"
 
 [profile.dev]
 panic = "abort"

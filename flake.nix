@@ -70,7 +70,7 @@
           # because skyline has some weird customizations that
           # I don't feel like getting into at this point in time
           # this means no reproducible builds (for now), but I can live with that
-          inherit (pkgs) rustup;
+          inherit (pkgs) rustup gdb python311;
         };
 
         # this is mainly for rust-analyzer to not get confused

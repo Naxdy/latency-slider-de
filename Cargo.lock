@@ -3,18 +3,32 @@
 version = 3
 
 [[package]]
-name = "arena-latency-slider"
-version = "0.2.0"
-dependencies = [
- "ninput",
- "skyline",
-]
-
-[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
+
+[[package]]
+name = "compile-time-lua-bind-hash"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "660bcccd4aaa4836cb685952d9ea4fb2b57d2565f4fd0c492fce4d2c0a1be0c0"
+dependencies = [
+ "lua_bind_hash",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "latency-slider-de"
+version = "0.2.0"
+dependencies = [
+ "lazy_static",
+ "ninput",
+ "paste",
+ "skyline 0.2.1 (git+https://github.com/ultimate-research/skyline-rs.git)",
+ "skyline_smash",
+]
 
 [[package]]
 name = "lazy_static"
@@ -27,6 +41,18 @@ name = "libc-nnsdk"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6823e4bff6dee10a75dfee95afe1c5a7f93a1b99a20013663e0cb04b3a64f867"
+
+[[package]]
+name = "libc-nnsdk"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "99102e4669e461772fcdfeb04ce9dec03c5fade700a3c12b1a4c2a27d97e9b68"
+
+[[package]]
+name = "lua_bind_hash"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee9675fd198b39d86a7d5d20c59ae9639a3b4157f28ebd6cc09b9f1397ab118a"
 
 [[package]]
 name = "ninput"
@@ -42,8 +68,23 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e0f4537c7470ba25f406d42c8cbfe26f64099af4b613e715c6bcb3d25856896c"
 dependencies = [
- "libc-nnsdk",
+ "libc-nnsdk 0.2.0",
 ]
+
+[[package]]
+name = "nnsdk"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df4385052e8e8252e9a6b87282f74e94fca6ab074cdc1415d4ad5c4cc3920fe3"
+dependencies = [
+ "libc-nnsdk 0.3.0",
+]
+
+[[package]]
+name = "paste"
+version = "1.0.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 
 [[package]]
 name = "proc-macro2"
@@ -69,9 +110,19 @@ version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9950fc129490cff3f4755aa523df16aeeb80130699abfc59cc7c6df8fc5802ad"
 dependencies = [
- "libc-nnsdk",
- "nnsdk",
- "skyline_macro",
+ "libc-nnsdk 0.2.0",
+ "nnsdk 0.2.0",
+ "skyline_macro 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "skyline"
+version = "0.2.1"
+source = "git+https://github.com/ultimate-research/skyline-rs.git#01a55d6a72d30b36b3e4b478161ebb4e513ea909"
+dependencies = [
+ "libc-nnsdk 0.2.0",
+ "nnsdk 0.3.0",
+ "skyline_macro 0.2.0 (git+https://github.com/ultimate-research/skyline-rs.git)",
 ]
 
 [[package]]
@@ -84,6 +135,30 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "skyline_macro"
+version = "0.2.0"
+source = "git+https://github.com/ultimate-research/skyline-rs.git#01a55d6a72d30b36b3e4b478161ebb4e513ea909"
+dependencies = [
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "skyline_smash"
+version = "0.1.0"
+source = "git+https://github.com/jugeeya/skyline-smash.git?branch=patch-2#84f9dd9a843392768c03764bc4aee28bc4ac05b6"
+dependencies = [
+ "compile-time-lua-bind-hash",
+ "lazy_static",
+ "libc-nnsdk 0.2.0",
+ "nnsdk 0.3.0",
+ "paste",
+ "skyline 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

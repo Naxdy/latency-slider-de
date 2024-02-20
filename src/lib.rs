@@ -1,6 +1,11 @@
 #![feature(restricted_std)]
 
+use offsets::OFFSET_DRAW;
 use skyline::hooks::InlineCtx;
+use skyline::nn::ui2d::{Layout, Pane};
+use smash::ui2d::{SmashPane, SmashTextBox};
+
+mod offsets;
 
 #[skyline::from_offset(0x37a1ef0)]
 unsafe fn set_text_string(pane: u64, string: *const u8);
@@ -10,13 +15,14 @@ static mut CURRENT_ARENA_ID: String = String::new();
 static mut CURRENT_INPUT_BUFFER: isize = 4;
 static mut MOST_RECENT_AUTO: isize = -1;
 static mut STEALTH_MODE: bool = false;
+static mut ORIG_VIP_TEXT: String = String::new();
 
 const MAX_INPUT_BUFFER: isize = 25;
 const MIN_INPUT_BUFFER: isize = -1;
 
-#[skyline::hook(offset = 0x18881d0, inline)]
-unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
+unsafe fn handle_user_input() {
     static mut CURRENT_COUNTER: usize = 0;
+
     if ninput::any::is_press(ninput::Buttons::RIGHT) {
         if CURRENT_COUNTER == 0 {
             CURRENT_INPUT_BUFFER += 1;
@@ -38,6 +44,11 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     }
 
     CURRENT_INPUT_BUFFER = CURRENT_INPUT_BUFFER.clamp(MIN_INPUT_BUFFER, MAX_INPUT_BUFFER);
+}
+
+#[skyline::hook(offset = 0x18881d0, inline)]
+unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
+    handle_user_input();
 
     if STEALTH_MODE {
         set_text_string(
@@ -75,6 +86,23 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     }
 }
 
+#[skyline::hook(offset = *OFFSET_DRAW)]
+unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64) {
+    // let layout_name = skyline::from_c_str((*layout).layout_name);
+    let root_pane = &mut *(*layout).root_pane;
+
+    draw_ui(&root_pane);
+
+    call_original!(layout, draw_info, cmd_buffer);
+}
+
+#[skyline::hook(offset = 0x1a12f40)]
+unsafe fn update_css_hook(arg: u64) {
+    handle_user_input();
+
+    call_original!(arg)
+}
+
 #[skyline::hook(offset = 0x1887afc, inline)]
 unsafe fn non_hdr_set_room_id(ctx: &skyline::hooks::InlineCtx) {
     let panel = *((*((*ctx.registers[0].x.as_ref() + 8) as *const u64) + 0x10) as *const u64);
@@ -96,11 +124,55 @@ unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
     }
 }
 
+unsafe fn draw_ui(root_pane: &Pane) {
+    let vip_pane_00 = root_pane.find_pane_by_name_recursive("txt_vip_title_00");
+    let vip_pane_01 = root_pane.find_pane_by_name_recursive("txt_vip_title_01");
+
+    if ORIG_VIP_TEXT.is_empty() || ORIG_VIP_TEXT.len() <= 0 {
+        match (vip_pane_00, vip_pane_01) {
+            (Some(x), _) | (_, Some(x)) => {
+                // get from raw using x.as_textbox().text_buf and x.as_textbox().text_buf_len
+                ORIG_VIP_TEXT = String::from_utf16(std::slice::from_raw_parts(
+                    x.as_textbox().text_buf as *mut u16,
+                    x.as_textbox().text_buf_len as usize,
+                ))
+                .unwrap();
+            }
+            _ => (),
+        }
+    } else {
+        match (vip_pane_00, vip_pane_01) {
+            (Some(x), Some(y)) => {
+                let s = if !STEALTH_MODE {
+                    if CURRENT_INPUT_BUFFER != -1 {
+                        format!("Input Latency: {}", CURRENT_INPUT_BUFFER)
+                    } else {
+                        if MOST_RECENT_AUTO == -1 {
+                            format!("Input Latency: Auto")
+                        } else {
+                            format!("Input Latency: Auto ({})", MOST_RECENT_AUTO)
+                        }
+                    }
+                } else {
+                    ORIG_VIP_TEXT.clone()
+                };
+
+                for e in [x, y] {
+                    e.as_textbox().set_text_string(s.as_str());
+                }
+            }
+            _ => (),
+        }
+    }
+}
+
 #[skyline::main(name = "latency-slider-de")]
 pub fn main() {
     skyline::install_hooks!(
         non_hdr_set_room_id,
         non_hdr_update_room_hook,
         non_hdr_set_online_latency,
+        update_css_hook,
+        handle_draw_hook
     );
 }
