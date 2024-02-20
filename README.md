@@ -13,7 +13,7 @@ Hence, I present to you Latency Slider DE (Definitive Edition).
 - As with the original mod, you can select your desired input delay in any arena (host or otherwise).
 - Additionally, you can also select your desired input delay on the character select screen. If you're in the CSS for quickplay / elite, the selected latency will also be displayed at the top.
 - The selected input delay will carry over to quickplay / elite / tournament mode.
-- You can use D-Pad up / down in the arena screen or CSS to show / hide the input delay text (useful e.g. if you're streaming and afraid to get reported to the Nintento ninjas).
+- You can use D-Pad up / down in the arena screen or CSS to hide / show the input delay text (useful e.g. if you're streaming and afraid to get reported to the Nintendo ninjas).
 
 ## How does it work?
 
