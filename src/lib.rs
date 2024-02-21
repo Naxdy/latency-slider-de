@@ -1,11 +1,8 @@
 #![feature(restricted_std)]
 
-use offsets::OFFSET_DRAW;
 use skyline::hooks::InlineCtx;
 use skyline::nn::ui2d::{Layout, Pane};
 use smash::ui2d::{SmashPane, SmashTextBox};
-
-mod offsets;
 
 #[skyline::from_offset(0x37a1ef0)]
 unsafe fn set_text_string(pane: u64, string: *const u8);
@@ -86,7 +83,7 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     }
 }
 
-#[skyline::hook(offset = *OFFSET_DRAW)]
+#[skyline::hook(offset = 0x004b620)]
 unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64) {
     // let layout_name = skyline::from_c_str((*layout).layout_name);
     let root_pane = &mut *(*layout).root_pane;

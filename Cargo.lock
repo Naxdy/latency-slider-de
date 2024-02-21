@@ -20,17 +20,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "latency-slider-de"
-version = "0.2.0"
-dependencies = [
- "lazy_static",
- "ninput",
- "paste",
- "skyline 0.2.1 (git+https://github.com/ultimate-research/skyline-rs.git)",
- "skyline_smash",
-]
-
-[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -177,3 +166,12 @@ name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+
+[[package]]
+name = "zlatency-slider-de"
+version = "0.2.1"
+dependencies = [
+ "ninput",
+ "skyline 0.2.1 (git+https://github.com/ultimate-research/skyline-rs.git)",
+ "skyline_smash",
+]
