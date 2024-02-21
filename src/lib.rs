@@ -17,27 +17,40 @@ static mut ORIG_VIP_TEXT: String = String::new();
 const MAX_INPUT_BUFFER: isize = 25;
 const MIN_INPUT_BUFFER: isize = -1;
 
-unsafe fn handle_user_input() {
-    static mut CURRENT_COUNTER: usize = 0;
+static mut DPAD_RIGHT_RELEASED: bool = true;
+static mut DPAD_LEFT_RELEASED: bool = true;
+static mut DPAD_UP_RELEASED: bool = true;
+static mut DPAD_DOWN_RELEASED: bool = true;
 
-    if ninput::any::is_press(ninput::Buttons::RIGHT) {
-        if CURRENT_COUNTER == 0 {
-            CURRENT_INPUT_BUFFER += 1;
-        }
-        CURRENT_COUNTER = (CURRENT_COUNTER + 1) % 10;
-    } else if ninput::any::is_press(ninput::Buttons::LEFT) {
-        if CURRENT_COUNTER == 0 {
-            CURRENT_INPUT_BUFFER -= 1;
-        }
-        CURRENT_COUNTER = (CURRENT_COUNTER + 1) % 10;
-    } else {
-        CURRENT_COUNTER = 0;
+unsafe fn handle_user_input() {
+    if ninput::any::is_press(ninput::Buttons::RIGHT) && DPAD_RIGHT_RELEASED {
+        CURRENT_INPUT_BUFFER += 1;
+        DPAD_RIGHT_RELEASED = false;
+    } else if ninput::any::is_press(ninput::Buttons::LEFT) && DPAD_LEFT_RELEASED {
+        CURRENT_INPUT_BUFFER -= 1;
+        DPAD_LEFT_RELEASED = false;
     }
 
-    if ninput::any::is_press(ninput::Buttons::UP) {
+    if ninput::any::is_press(ninput::Buttons::UP) && DPAD_UP_RELEASED {
         STEALTH_MODE = true;
-    } else if ninput::any::is_press(ninput::Buttons::DOWN) {
+        DPAD_UP_RELEASED = false;
+    } else if ninput::any::is_press(ninput::Buttons::DOWN) && DPAD_DOWN_RELEASED {
         STEALTH_MODE = false;
+        DPAD_DOWN_RELEASED = false;
+    }
+
+    // Clear button states (ninput is a shit input library lol)
+    if !ninput::any::is_press(ninput::Buttons::RIGHT) {
+        DPAD_RIGHT_RELEASED = true;
+    }
+    if !ninput::any::is_press(ninput::Buttons::LEFT) {
+        DPAD_LEFT_RELEASED = true;
+    }
+    if !ninput::any::is_press(ninput::Buttons::UP) {
+        DPAD_UP_RELEASED = true;
+    }
+    if !ninput::any::is_press(ninput::Buttons::DOWN) {
+        DPAD_DOWN_RELEASED = true;
     }
 
     CURRENT_INPUT_BUFFER = CURRENT_INPUT_BUFFER.clamp(MIN_INPUT_BUFFER, MAX_INPUT_BUFFER);
