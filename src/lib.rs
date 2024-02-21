@@ -17,40 +17,49 @@ static mut ORIG_VIP_TEXT: String = String::new();
 const MAX_INPUT_BUFFER: isize = 25;
 const MIN_INPUT_BUFFER: isize = -1;
 
-static mut DPAD_RIGHT_RELEASED: bool = true;
-static mut DPAD_LEFT_RELEASED: bool = true;
-static mut DPAD_UP_RELEASED: bool = true;
-static mut DPAD_DOWN_RELEASED: bool = true;
+struct DpadInputState {
+    left_released: bool,
+    right_released: bool,
+    up_released: bool,
+    down_released: bool
+}
+
+static mut DPAD: DpadInputState = DpadInputState {
+    left_released: true,
+    right_released: true,
+    up_released: true,
+    down_released: true
+};
 
 unsafe fn handle_user_input() {
-    if ninput::any::is_press(ninput::Buttons::RIGHT) && DPAD_RIGHT_RELEASED {
+    if ninput::any::is_press(ninput::Buttons::RIGHT) && DPAD.right_released {
         CURRENT_INPUT_BUFFER += 1;
-        DPAD_RIGHT_RELEASED = false;
-    } else if ninput::any::is_press(ninput::Buttons::LEFT) && DPAD_LEFT_RELEASED {
+        DPAD.right_released = false;
+    } else if ninput::any::is_press(ninput::Buttons::LEFT) && DPAD.left_released {
         CURRENT_INPUT_BUFFER -= 1;
-        DPAD_LEFT_RELEASED = false;
+        DPAD.left_released = false;
     }
 
-    if ninput::any::is_press(ninput::Buttons::UP) && DPAD_UP_RELEASED {
+    if ninput::any::is_press(ninput::Buttons::UP) && DPAD.up_released {
         STEALTH_MODE = true;
-        DPAD_UP_RELEASED = false;
-    } else if ninput::any::is_press(ninput::Buttons::DOWN) && DPAD_DOWN_RELEASED {
+        DPAD.up_released = false;
+    } else if ninput::any::is_press(ninput::Buttons::DOWN) && DPAD.down_released {
         STEALTH_MODE = false;
-        DPAD_DOWN_RELEASED = false;
+        DPAD.down_released = false;
     }
 
     // Clear button states (ninput is a shit input library lol)
     if !ninput::any::is_press(ninput::Buttons::RIGHT) {
-        DPAD_RIGHT_RELEASED = true;
+        DPAD.right_released = true;
     }
     if !ninput::any::is_press(ninput::Buttons::LEFT) {
-        DPAD_LEFT_RELEASED = true;
+        DPAD.left_released = true;
     }
     if !ninput::any::is_press(ninput::Buttons::UP) {
-        DPAD_UP_RELEASED = true;
+        DPAD.up_released = true;
     }
     if !ninput::any::is_press(ninput::Buttons::DOWN) {
-        DPAD_DOWN_RELEASED = true;
+        DPAD.down_released = true;
     }
 
     CURRENT_INPUT_BUFFER = CURRENT_INPUT_BUFFER.clamp(MIN_INPUT_BUFFER, MAX_INPUT_BUFFER);
