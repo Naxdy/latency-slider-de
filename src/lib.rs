@@ -13,6 +13,7 @@ static mut CURRENT_INPUT_BUFFER: isize = 4;
 static mut MOST_RECENT_AUTO: isize = -1;
 static mut STEALTH_MODE: bool = false;
 static mut ORIG_VIP_TEXT: String = String::new();
+static mut IS_CSS: bool = false;
 
 const MAX_INPUT_BUFFER: isize = 25;
 const MIN_INPUT_BUFFER: isize = -1;
@@ -46,6 +47,10 @@ unsafe fn handle_user_input() {
 #[skyline::hook(offset = 0x18881d0, inline)]
 unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     handle_user_input();
+
+    if IS_CSS {
+        IS_CSS = false;
+    }
 
     if STEALTH_MODE {
         set_text_string(
@@ -85,10 +90,11 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
 
 #[skyline::hook(offset = 0x004b620)]
 unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64) {
-    // let layout_name = skyline::from_c_str((*layout).layout_name);
-    let root_pane = &mut *(*layout).root_pane;
+    if IS_CSS {
+        let root_pane = &mut *(*layout).root_pane;
 
-    draw_ui(&root_pane);
+        draw_ui(&root_pane);
+    }
 
     call_original!(layout, draw_info, cmd_buffer);
 }
@@ -119,6 +125,31 @@ unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
     if CURRENT_INPUT_BUFFER != -1 {
         *(*ctx.registers[19].x.as_ref() as *mut u8) = CURRENT_INPUT_BUFFER as u8;
     }
+}
+
+#[skyline::hook(offset = 0x19f0540, inline)]
+unsafe fn display_css_hook(_: &InlineCtx) {
+    IS_CSS = true;
+}
+
+#[skyline::hook(offset = 0x22dbe10, inline)]
+unsafe fn melee_normal_sequence_scene_hook(_: &InlineCtx) {
+    IS_CSS = false;
+}
+
+#[skyline::hook(offset = 0x235a628, inline)]
+unsafe fn main_menu_scene_hook(_: &InlineCtx) {
+    IS_CSS = false;
+}
+
+#[skyline::hook(offset = 0x236757c, inline)]
+unsafe fn online_melee_any_scene_hook(_: &InlineCtx) {
+    IS_CSS = false;
+}
+
+#[skyline::hook(offset = 0x2318210, inline)]
+unsafe fn ingame_scene_hook(_: &InlineCtx) {
+    IS_CSS = false;
 }
 
 unsafe fn draw_ui(root_pane: &Pane) {
@@ -170,6 +201,11 @@ pub fn main() {
         non_hdr_update_room_hook,
         non_hdr_set_online_latency,
         update_css_hook,
-        handle_draw_hook
+        handle_draw_hook,
+        display_css_hook,
+        melee_normal_sequence_scene_hook,
+        main_menu_scene_hook,
+        online_melee_any_scene_hook,
+        ingame_scene_hook
     );
 }
