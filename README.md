@@ -51,6 +51,21 @@ No. But don't take my word for it, the source is available for anyone to see. Fe
 #### Will I get banned if I use this mod on qp / in arenas?
 The short answer is "I don't know, but probably not". The slightly longer answer is that using any mod (online or offline) carries risks with it. However, I think that the biggest risk when using this mod is other people finding out you have it (e.g. because you publicly posted a screenshot with the latency slider text visible) and proceeding to mass report you to Nintendo. Like the original, the mod doesn't send any extra network packets (arenas or otherwise), so short of Nintendo scanning your SD card, there shouldn't be any way to automatically detect it.
 
+#### Does this mod send any additional network packets?
+
+No. See above.
+
+#### Is this mod compatible with the training mode modpack?
+Yesn't. `latency-slider-de` and `training-modpack` both hook the draw function of the game in the same place. While this hasn't caused any issues for me or anyone else I've talked to running both mods at once (since v0.2.1), this isn't technically supported. If you notice getting crashes, I suggest disabling one of the two, depending on your current use case.
+
+#### Is this mod compatible with the original arena latency slider, or other latency slider mods?
+
+NO. These essentially do the same thing but differently, running multiple of these mods at the same time is very likely to cause your game to crash. If you want to run this mod, you should remove / disable all other "latency slider" type mods first.
+
+#### Is this mod compatible with the VSync mod?
+
+The VSync mod, aka "1 frame less delay", aka `less-delay` is compatible with this mod. I maintain a repo for that one as well, over here: https://github.com/xNaxdy/less-delay
+
 #### Are you fine with people using this mod to cheat in online tournaments, or on qp?
 The short answer is "how people use this mod is up to them". The long answer is this: First, for quickplay, I don't view using this mod as cheating, but rather making the game playable, since there's nothing on the line (if you think GSP holds any meaningful value, I suggest an immediate and thorough psych evaluation), same as in arenas.
 
