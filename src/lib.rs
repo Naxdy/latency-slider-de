@@ -22,14 +22,14 @@ struct DpadInputState {
     left_released: bool,
     right_released: bool,
     up_released: bool,
-    down_released: bool
+    down_released: bool,
 }
 
 static mut DPAD: DpadInputState = DpadInputState {
     left_released: true,
     right_released: true,
     up_released: true,
-    down_released: true
+    down_released: true,
 };
 
 unsafe fn handle_user_input() {
@@ -77,36 +77,35 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     if STEALTH_MODE {
         set_text_string(
             CURRENT_PANE_HANDLE as u64,
-            format!("ID: {}", CURRENT_ARENA_ID).as_ptr(),
+            format!("ID: {}\0", CURRENT_ARENA_ID).as_ptr(),
         );
-        return;
-    }
-
-    if CURRENT_INPUT_BUFFER == -1 {
-        if MOST_RECENT_AUTO == -1 {
-            set_text_string(
-                CURRENT_PANE_HANDLE as u64,
-                format!("ID: {}\nInput Latency: Auto\0", CURRENT_ARENA_ID).as_ptr(),
-            );
+    } else {
+        if CURRENT_INPUT_BUFFER == -1 {
+            if MOST_RECENT_AUTO == -1 {
+                set_text_string(
+                    CURRENT_PANE_HANDLE as u64,
+                    format!("ID: {}\nInput Latency: Auto\0", CURRENT_ARENA_ID).as_ptr(),
+                );
+            } else {
+                set_text_string(
+                    CURRENT_PANE_HANDLE as u64,
+                    format!(
+                        "ID: {}\nInput Latency: Auto ({})\0",
+                        CURRENT_ARENA_ID, MOST_RECENT_AUTO
+                    )
+                    .as_ptr(),
+                )
+            }
         } else {
             set_text_string(
                 CURRENT_PANE_HANDLE as u64,
                 format!(
-                    "ID: {}\nInput Latency: Auto ({})\0",
-                    CURRENT_ARENA_ID, MOST_RECENT_AUTO
+                    "ID: {}\nInput Latency: {}\0",
+                    CURRENT_ARENA_ID, CURRENT_INPUT_BUFFER
                 )
                 .as_ptr(),
-            )
+            );
         }
-    } else {
-        set_text_string(
-            CURRENT_PANE_HANDLE as u64,
-            format!(
-                "ID: {}\nInput Latency: {}\0",
-                CURRENT_ARENA_ID, CURRENT_INPUT_BUFFER
-            )
-            .as_ptr(),
-        );
     }
 }
 
@@ -182,11 +181,11 @@ unsafe fn draw_ui(root_pane: &Pane) {
         match (vip_pane_00, vip_pane_01) {
             (Some(x), _) | (_, Some(x)) => {
                 // get from raw using x.as_textbox().text_buf and x.as_textbox().text_buf_len
-                ORIG_VIP_TEXT = String::from_utf16(std::slice::from_raw_parts(
+                ORIG_VIP_TEXT = dbg!(String::from_utf16(std::slice::from_raw_parts(
                     x.as_textbox().text_buf as *mut u16,
                     x.as_textbox().text_buf_len as usize,
                 ))
-                .unwrap();
+                .unwrap());
             }
             _ => (),
         }
