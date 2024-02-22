@@ -8,10 +8,10 @@ Hence, I present to you Latency Slider DE (Definitive Edition).
 
 **IMPORTANT:** This build is for use with SSBU v13.0.2 ONLY!
 
-## Features
+## Features / Usage
 
 - As with the original mod, you can select your desired input delay in any arena (host or otherwise).
-- Additionally, you can also select your desired input delay on the character select screen. If you're in the CSS for quickplay / elite, the selected latency will also be displayed at the top.
+- Additionally, you can also select your desired input delay on the character select screen. If you're in the CSS for quickplay / elite, the selected latency will also be displayed at the top. However, you can (blindly) adjust your input latency on *any* CSS, not just the quickplay one (however, only the quickplay one will *display* your input latency).
 - The selected input delay will carry over to quickplay / elite / tournament mode.
 - You can use D-Pad up / down in the arena screen or CSS to hide / show the input delay text (useful e.g. if you're streaming and afraid to get reported to the Nintendo ninjas).
 
@@ -19,6 +19,18 @@ Hence, I present to you Latency Slider DE (Definitive Edition).
 
 Refer to the original author's explanation in [the original README](README_orig.md).
 
+## How to install?
+
+You will need a moddable switch with atmosphere already installed on it. If you don't have this yet (or don't even know what I'm talking about), look into Switch modding in general first, then come back here.
+
+1. Download and install [Skyline](https://github.com/skyline-dev/skyline) by copying the `exefs` directory into the folder `atmosphere/contents/01006A800016E000` (create if it doesn't exist yet)
+2. Download the latest `libzlatency_slider_de.nro` from [this page](https://github.com/xNaxdy/latency-slider-de/releases)
+
+    Optional: If you have the knowledge, you can also download `libzlatency_slider_de.sig` and use this file to verify the integrity of `libzlatency_slider_de.nro`. This is mostly useful if you've downloaded the `.nro` from a different place and want to verify that it is one built by me. You can safely skip this optional step however, if you have no idea what I'm talking about here.
+3. Copy the `libzlatency_slider_de.nro` to your SD card, into the folder `atmosphere/contents/01006A800016E000/romfs/skyline/plugins` (create if it doesn't exist yet)
+4. Boot up the game, go online, and open up an arena. Confirm the mod is working by observing the room id text in the top right (it should show you your input latency now).
+
+Congratulations, Smash Ultimate online is now actually playable!
 
 ## Building
 
