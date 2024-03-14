@@ -32,7 +32,7 @@ static mut DPAD: DpadInputState = DpadInputState {
     down_released: true,
 };
 
-unsafe fn handle_user_input() {
+unsafe fn handle_user_input(on_css: bool) {
     if ninput::any::is_press(ninput::Buttons::RIGHT) && DPAD.right_released {
         CURRENT_INPUT_BUFFER += 1;
         DPAD.right_released = false;
@@ -47,6 +47,11 @@ unsafe fn handle_user_input() {
     } else if ninput::any::is_press(ninput::Buttons::DOWN) && DPAD.down_released {
         STEALTH_MODE = false;
         DPAD.down_released = false;
+
+        // kinda hacky for elite smash text
+        if on_css {
+            IS_CSS = true;
+        }
     }
 
     // Clear button states (ninput is a shit input library lol)
@@ -68,7 +73,7 @@ unsafe fn handle_user_input() {
 
 #[skyline::hook(offset = 0x18881d0, inline)]
 unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
-    handle_user_input();
+    handle_user_input(false);
 
     if IS_CSS {
         IS_CSS = false;
@@ -122,7 +127,7 @@ unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64)
 
 #[skyline::hook(offset = 0x1a12f40)]
 unsafe fn update_css_hook(arg: u64) {
-    handle_user_input();
+    handle_user_input(true);
 
     call_original!(arg)
 }
@@ -150,7 +155,9 @@ unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
 
 #[skyline::hook(offset = 0x19f0540, inline)]
 unsafe fn display_css_hook(_: &InlineCtx) {
-    IS_CSS = true;
+    if !STEALTH_MODE {
+        IS_CSS = true;
+    }
 }
 
 #[skyline::hook(offset = 0x22dbe10, inline)]
@@ -180,7 +187,6 @@ unsafe fn draw_ui(root_pane: &Pane) {
     if ORIG_VIP_TEXT.is_empty() || ORIG_VIP_TEXT.len() <= 0 {
         match (vip_pane_00, vip_pane_01) {
             (Some(x), _) | (_, Some(x)) => {
-                // get from raw using x.as_textbox().text_buf and x.as_textbox().text_buf_len
                 ORIG_VIP_TEXT = dbg!(String::from_utf16(std::slice::from_raw_parts(
                     x.as_textbox().text_buf as *mut u16,
                     x.as_textbox().text_buf_len as usize,
