@@ -125,12 +125,12 @@ unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64)
     call_original!(layout, draw_info, cmd_buffer);
 }
 
-#[skyline::hook(offset = 0x1a12f40)]
+/*#[skyline::hook(offset = 0x1a12f40)]
 unsafe fn update_css_hook(arg: u64) {
     handle_user_input(true);
 
     call_original!(arg)
-}
+}*/
 
 #[skyline::hook(offset = 0x1887afc, inline)]
 unsafe fn non_hdr_set_room_id(ctx: &skyline::hooks::InlineCtx) {
@@ -153,12 +153,12 @@ unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
     }
 }
 
-#[skyline::hook(offset = 0x19f0540, inline)]
+/*#[skyline::hook(offset = 0x19f0540, inline)]
 unsafe fn display_css_hook(_: &InlineCtx) {
     if !STEALTH_MODE {
         IS_CSS = true;
     }
-}
+}*/
 
 #[skyline::hook(offset = 0x22dbe10, inline)]
 unsafe fn melee_normal_sequence_scene_hook(_: &InlineCtx) {
@@ -227,9 +227,7 @@ pub fn main() {
         non_hdr_set_room_id,
         non_hdr_update_room_hook,
         non_hdr_set_online_latency,
-        update_css_hook,
         handle_draw_hook,
-        display_css_hook,
         melee_normal_sequence_scene_hook,
         main_menu_scene_hook,
         online_melee_any_scene_hook,
