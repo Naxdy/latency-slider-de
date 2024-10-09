@@ -114,7 +114,7 @@
 
         latency-slider-de-nro = pkgs.runCommandLocal "latency-slider-de-nro-${self.packages.${system}.latency-slider-de.version}" { } ''
           mkdir -p $out/lib
-          ${self.packages.${system}.linkle}/bin/linkle nro ${self.packages.${system}.latency-slider-de}/lib/libzlatency_slider_de.so $out/lib/libzlatency_slider_de.nro
+          ${self.packages.${system}.linkle}/bin/linkle nro ${self.packages.${system}.latency-slider-de}/lib/liblatency_slider_de.so $out/lib/liblatency_slider_de.nro
         '';
 
         latency-slider-de =

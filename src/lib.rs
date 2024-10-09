@@ -1,8 +1,15 @@
 #![feature(restricted_std)]
 
+use offsets::{
+    LOC_DISPLAY_CSS, LOC_DRAW, LOC_INGAME_SCENE, LOC_MAIN_MENU_SCENE,
+    LOC_MELEE_NORMAL_SEQUENCE_SCENE, LOC_ONLINE_MELEE_ANY_SCENE, LOC_SET_ONLINE_LATENCY,
+    LOC_SET_ROOM_ID, LOC_UPDATE_CSS, LOC_UPDATE_ROOM,
+};
 use skyline::hooks::InlineCtx;
 use skyline::nn::ui2d::{Layout, Pane};
 use smash::ui2d::{SmashPane, SmashTextBox};
+
+mod offsets;
 
 #[skyline::from_offset(0x37a1ef0)]
 unsafe fn set_text_string(pane: u64, string: *const u8);
@@ -71,7 +78,7 @@ unsafe fn handle_user_input(on_css: bool) {
     CURRENT_INPUT_BUFFER = CURRENT_INPUT_BUFFER.clamp(MIN_INPUT_BUFFER, MAX_INPUT_BUFFER);
 }
 
-#[skyline::hook(offset = 0x18881d0, inline)]
+#[skyline::hook(offset = LOC_UPDATE_ROOM.get_offset_in_memory().unwrap(), inline)]
 unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     handle_user_input(false);
 
@@ -112,7 +119,7 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
     }
 }
 
-#[skyline::hook(offset = 0x004b620)]
+#[skyline::hook(offset = LOC_DRAW.get_offset_in_memory().unwrap())]
 unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64) {
     if IS_CSS {
         let root_pane = &mut *(*layout).root_pane;
@@ -123,14 +130,14 @@ unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64)
     call_original!(layout, draw_info, cmd_buffer);
 }
 
-#[skyline::hook(offset = 0x1a12f40)]
+#[skyline::hook(offset = LOC_UPDATE_CSS.get_offset_in_memory().unwrap())]
 unsafe fn update_css_hook(arg: u64) {
     handle_user_input(true);
 
     call_original!(arg)
 }
 
-#[skyline::hook(offset = 0x1887afc, inline)]
+#[skyline::hook(offset = LOC_SET_ROOM_ID.get_offset_in_memory().unwrap(), inline)]
 unsafe fn non_hdr_set_room_id(ctx: &skyline::hooks::InlineCtx) {
     let panel = *((*((*ctx.registers[0].x.as_ref() + 8) as *const u64) + 0x10) as *const u64);
     CURRENT_PANE_HANDLE = panel as usize;
@@ -141,7 +148,7 @@ unsafe fn non_hdr_set_room_id(ctx: &skyline::hooks::InlineCtx) {
     .unwrap());
 }
 
-#[skyline::hook(offset = 0x16ccc58, inline)]
+#[skyline::hook(offset = LOC_SET_ONLINE_LATENCY.get_offset_in_memory().unwrap(), inline)]
 unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
     let auto = *(*ctx.registers[19].x.as_ref() as *mut u8);
 
@@ -151,29 +158,29 @@ unsafe fn non_hdr_set_online_latency(ctx: &InlineCtx) {
     }
 }
 
-#[skyline::hook(offset = 0x19f0540, inline)]
+#[skyline::hook(offset = LOC_DISPLAY_CSS.get_offset_in_memory().unwrap(), inline)]
 unsafe fn display_css_hook(_: &InlineCtx) {
     if !STEALTH_MODE {
         IS_CSS = true;
     }
 }
 
-#[skyline::hook(offset = 0x22dbe10, inline)]
+#[skyline::hook(offset = LOC_MELEE_NORMAL_SEQUENCE_SCENE.get_offset_in_memory().unwrap(), inline)]
 unsafe fn melee_normal_sequence_scene_hook(_: &InlineCtx) {
     IS_CSS = false;
 }
 
-#[skyline::hook(offset = 0x235a628, inline)]
+#[skyline::hook(offset = LOC_MAIN_MENU_SCENE.get_offset_in_memory().unwrap(), inline)]
 unsafe fn main_menu_scene_hook(_: &InlineCtx) {
     IS_CSS = false;
 }
 
-#[skyline::hook(offset = 0x236757c, inline)]
+#[skyline::hook(offset = LOC_ONLINE_MELEE_ANY_SCENE.get_offset_in_memory().unwrap(), inline)]
 unsafe fn online_melee_any_scene_hook(_: &InlineCtx) {
     IS_CSS = false;
 }
 
-#[skyline::hook(offset = 0x2318210, inline)]
+#[skyline::hook(offset = LOC_INGAME_SCENE.get_offset_in_memory().unwrap(), inline)]
 unsafe fn ingame_scene_hook(_: &InlineCtx) {
     IS_CSS = false;
 }
@@ -214,16 +221,31 @@ unsafe fn draw_ui(root_pane: &Pane) {
 
 #[skyline::main(name = "latency-slider-de")]
 pub fn main() {
-    skyline::install_hooks!(
-        non_hdr_set_room_id,
-        non_hdr_update_room_hook,
-        non_hdr_set_online_latency,
-        update_css_hook,
-        handle_draw_hook,
-        display_css_hook,
-        melee_normal_sequence_scene_hook,
-        main_menu_scene_hook,
-        online_melee_any_scene_hook,
-        ingame_scene_hook
-    );
+    // make sure that all hooks are findable
+    // and don't crash the game if they're not
+    if ensure_hooks!(
+        LOC_UPDATE_ROOM,
+        LOC_UPDATE_CSS,
+        LOC_SET_ROOM_ID,
+        LOC_DISPLAY_CSS,
+        LOC_DRAW,
+        LOC_SET_ONLINE_LATENCY,
+        LOC_INGAME_SCENE,
+        LOC_ONLINE_MELEE_ANY_SCENE,
+        LOC_MAIN_MENU_SCENE,
+        LOC_MELEE_NORMAL_SEQUENCE_SCENE
+    ) {
+        skyline::install_hooks!(
+            non_hdr_set_room_id,
+            non_hdr_update_room_hook,
+            non_hdr_set_online_latency,
+            update_css_hook,
+            handle_draw_hook,
+            display_css_hook,
+            melee_normal_sequence_scene_hook,
+            main_menu_scene_hook,
+            online_melee_any_scene_hook,
+            ingame_scene_hook
+        );
+    }
 }

@@ -1,6 +1,6 @@
 [package]
-name = "zlatency-slider-de"
-version = "0.2.4"
+name = "latency-slider-de"
+version = "0.3.0"
 authors = []
 edition = "2021"
 
@@ -14,6 +14,7 @@ crate-type = ["cdylib"]
 ninput = { git = "https://github.com/blu-dev/ninput", version = "0.1.0" }
 skyline_smash = { git = "https://github.com/jugeeya/skyline-smash.git", branch = "patch-2" }
 skyline = { git = "https://github.com/ultimate-research/skyline-rs.git" }
+once_cell = { version = "1.20.2" }
 
 [profile.dev]
 panic = "abort"
