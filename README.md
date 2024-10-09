@@ -25,12 +25,12 @@ Refer to the original author's explanation in [the original README](README_orig.
 You will need a moddable switch with atmosphere already installed on it. If you don't have this yet (or don't even know what I'm talking about), look into Switch modding in general first, then come back here.
 
 1. Download and install [Skyline](https://github.com/skyline-dev/skyline) by copying the `exefs` directory into the folder `atmosphere/contents/01006A800016E000` (create if it doesn't exist yet)
-2. Download the latest `libzlatency_slider_de.nro` from [this page](https://github.com/xNaxdy/latency-slider-de/releases)
+2. Download the latest `liblatency_slider_de.nro` from [this page](https://github.com/xNaxdy/latency-slider-de/releases)
 
 > [!NOTE]
 > This project supports reproducible builds. If you want to ensure that the `.nro` uploaded to the Releases page is actually built from the source available, you can build the project yourself very easily. See the instructions in the "Building" section below.
 
-3. Copy the `libzlatency_slider_de.nro` to your SD card, into the folder `atmosphere/contents/01006A800016E000/romfs/skyline/plugins` (create if it doesn't exist yet)
+3. Copy the `liblatency_slider_de.nro` to your SD card, into the folder `atmosphere/contents/01006A800016E000/romfs/skyline/plugins` (create if it doesn't exist yet)
 4. Boot up the game, go online, and open up an arena. Confirm the mod is working by observing the room id text in the top right (it should show you your input latency now).
 
 Congratulations, Smash Ultimate online is now actually playable!
@@ -49,7 +49,7 @@ nix build .#
 nix build github:Naxdy/latency-slider-de
 ```
 
-Nix will take care of the rest, that is downloading the necessary toolchain, build tools, and dependencies, as well as compile everything for you. The resulting library will be put in `./result/lib/libzlatency_slider_de.nro`, which you can then upload to your Switch, or copy to your SD card as usual.
+Nix will take care of the rest, that is downloading the necessary toolchain, build tools, and dependencies, as well as compile everything for you. The resulting library will be put in `./result/lib/liblatency_slider_de.nro`, which you can then upload to your Switch, or copy to your SD card as usual.
 
 ## Contributing
 
@@ -85,14 +85,6 @@ Like the original, the mod doesn't send any extra network packets (arenas or oth
 
 No. See above.
 
-#### Is this mod compatible with the training mode modpack?
-
-Yesn't. `latency-slider-de` and `training-modpack` both hook the draw function of the game in the same place. While this hasn't caused any issues for me or anyone else I've talked to running both mods at once (since v0.2.1), this isn't technically supported. If you notice getting crashes, I suggest disabling one of the two, depending on your current use case.
-
-### Is this mod compatible with "The CSK Collection"?
-
-Not really, but maybe. See https://github.com/Naxdy/latency-slider-de/issues/26 and https://github.com/Naxdy/latency-slider-de/issues/22 for more info.
-
 #### Is this mod compatible with the original arena latency slider, or other latency slider mods?
 
 NO. These essentially do the same thing but differently, running multiple of these mods at the same time is very likely to cause your game to crash. If you want to run this mod, you should remove / disable all other "latency slider" type mods first.
@@ -100,6 +92,14 @@ NO. These essentially do the same thing but differently, running multiple of the
 #### Is this mod compatible with the VSync mod?
 
 The VSync mod, aka "1 frame less delay", aka `less-delay` is compatible with this mod. I maintain a repo for that one as well, over here: https://github.com/xNaxdy/less-delay
+
+#### Is this mod compatible with [insert other mod here]?
+
+Don't know, don't care. SSBU modding is kind of like chemistry, except you don't know the chemicals you're using. Any concoction has the chance to blow up in your face. The answer is: Try it. If it works, great. If not, you'll have to pick which mod you want enabled.
+
+I _highly_ suggest using a mod manager of some sort to enable / disable mods as you need, to avoid potential complications.
+
+Unfortunately I can't really invest any time into ensuring that latency-slider-de is compatible with each and every mod out there. However, if you submit a PR that improves compatibility with other mods, I will happily accept it!
 
 #### Are you fine with people using this mod to cheat in online tournaments, or on qp?
 
