@@ -6,9 +6,6 @@ However, the beauty of the Internet is that nothing is truly lost, and the beaut
 
 Hence, I present to you Latency Slider DE (Definitive Edition).
 
-> [!IMPORTANT]
-> This build is for use with SSBU v13.0.2 ONLY!
-
 ## Features / Usage
 
 - As with the original mod, you can select your desired input delay in any arena (host or otherwise).
