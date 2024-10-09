@@ -89,6 +89,10 @@ No. See above.
 
 Yesn't. `latency-slider-de` and `training-modpack` both hook the draw function of the game in the same place. While this hasn't caused any issues for me or anyone else I've talked to running both mods at once (since v0.2.1), this isn't technically supported. If you notice getting crashes, I suggest disabling one of the two, depending on your current use case.
 
+### Is this mod compatible with "The CSK Collection"?
+
+Not really, but maybe. See https://github.com/Naxdy/latency-slider-de/issues/26 and https://github.com/Naxdy/latency-slider-de/issues/22 for more info.
+
 #### Is this mod compatible with the original arena latency slider, or other latency slider mods?
 
 NO. These essentially do the same thing but differently, running multiple of these mods at the same time is very likely to cause your game to crash. If you want to run this mod, you should remove / disable all other "latency slider" type mods first.
