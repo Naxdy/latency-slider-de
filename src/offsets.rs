@@ -33,6 +33,7 @@ fn byte_search(needle: &[u8]) -> Option<usize> {
     let search_space = unsafe {
         let start = skyline::hooks::getRegionAddress(skyline::hooks::Region::Text) as *const u8;
         let end = skyline::hooks::getRegionAddress(skyline::hooks::Region::Rodata) as *const u8;
+
         let length = end.offset_from(start) as usize;
 
         std::slice::from_raw_parts(start, length)
@@ -66,7 +67,17 @@ pub struct SSBUMemoryLocation<'a> {
 impl SSBUMemoryLocation<'_> {
     pub fn get_offset_in_memory(&self) -> Option<usize> {
         *self.cached_offset.get_or_init(|| unsafe {
-            Some(((byte_search(self.signature)? as *const u8).offset(self.start_offset)) as usize)
+            let r = byte_search(self.signature)
+                .map(|e| (e as *const u8).offset(self.start_offset) as usize);
+
+            if let Some(r) = r {
+                println!(
+                    "[latency-slider-de] Found {} at {r:#09x?}",
+                    self.location_name
+                );
+            }
+
+            r
         })
     }
 }
@@ -194,3 +205,17 @@ pub static LOC_UPDATE_ROOM: SSBUMemoryLocation = SSBUMemoryLocation {
     location_name: "update_room",
     cached_offset: OnceCell::new(),
 };
+
+// TODO: not findable atm, probably need to change search algo.
+// this and `find_pane_by_name_recursive` are currently the only hardcoded offsets
+// pub static LOC_SET_TEXT_STRING: SSBUMemoryLocation = SSBUMemoryLocation {
+//     signature: &[
+//         0xfc, 0x0f, 0x1d, 0xf8, 0xf4, 0x4f, 0x01, 0xa9, 0xfd, 0x7b, 0x02, 0xa9, 0xfd, 0x83, 0x00,
+//         0x91, 0xff, 0x07, 0x40, 0xd1, 0xf4, 0x03, 0x01, 0xaa, 0xf3, 0x03, 0x00, 0xaa, 0xe0, 0x03,
+//         0x00, 0x91, 0xe2, 0x03, 0x14, 0x32, 0xe1, 0x03, 0x1f, 0x2a, 0x76, 0x76, 0x08, 0x94, 0xf4,
+//         0x04, 0x00, 0xb4, 0x8b, 0x02, 0x40, 0x39, 0xeb, 0x04, 0x00, 0x34, 0xe8, 0x03, 0x00, 0x32,
+//     ],
+//     start_offset: 0,
+//     location_name: "set_text_string",
+//     cached_offset: OnceCell::new(),
+// };

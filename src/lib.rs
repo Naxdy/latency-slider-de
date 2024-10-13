@@ -7,11 +7,11 @@ use offsets::{
 };
 use skyline::hooks::InlineCtx;
 use skyline::nn::ui2d::{Layout, Pane};
-use smash::ui2d::{SmashPane, SmashTextBox};
+use smash::ui2d::SmashPane;
 
 mod offsets;
 
-#[skyline::from_offset(0x37a1ef0)]
+#[skyline::from_offset(0x37a1f10)]
 unsafe fn set_text_string(pane: u64, string: *const u8);
 
 static mut CURRENT_PANE_HANDLE: usize = 0;
@@ -19,7 +19,7 @@ static mut CURRENT_ARENA_ID: String = String::new();
 static mut CURRENT_INPUT_BUFFER: isize = 4;
 static mut MOST_RECENT_AUTO: isize = -1;
 static mut STEALTH_MODE: bool = false;
-static mut _ORIG_VIP_TEXT: String = String::new();
+static mut ORIG_VIP_TEXT: String = String::new();
 static mut IS_CSS: bool = false;
 
 const MAX_INPUT_BUFFER: isize = 25;
@@ -86,38 +86,37 @@ unsafe fn non_hdr_update_room_hook(_: &skyline::hooks::InlineCtx) {
         IS_CSS = false;
     }
 
-    // TODO: Reevaluate functionality after update to 19.0.0
-    // if STEALTH_MODE {
-    //     set_text_string(
-    //         CURRENT_PANE_HANDLE as u64,
-    //         format!("ID: {}\0", CURRENT_ARENA_ID).as_ptr(),
-    //     );
-    // } else if CURRENT_INPUT_BUFFER == -1 {
-    //     if MOST_RECENT_AUTO == -1 {
-    //         set_text_string(
-    //             CURRENT_PANE_HANDLE as u64,
-    //             format!("ID: {}\nInput Latency: Auto\0", CURRENT_ARENA_ID).as_ptr(),
-    //         );
-    //     } else {
-    //         set_text_string(
-    //             CURRENT_PANE_HANDLE as u64,
-    //             format!(
-    //                 "ID: {}\nInput Latency: Auto ({})\0",
-    //                 CURRENT_ARENA_ID, MOST_RECENT_AUTO
-    //             )
-    //             .as_ptr(),
-    //         )
-    //     }
-    // } else {
-    //     set_text_string(
-    //         CURRENT_PANE_HANDLE as u64,
-    //         format!(
-    //             "ID: {}\nInput Latency: {}\0",
-    //             CURRENT_ARENA_ID, CURRENT_INPUT_BUFFER
-    //         )
-    //         .as_ptr(),
-    //     );
-    // }
+    if STEALTH_MODE {
+        set_text_string(
+            CURRENT_PANE_HANDLE as u64,
+            format!("ID: {}\0", CURRENT_ARENA_ID).as_ptr(),
+        );
+    } else if CURRENT_INPUT_BUFFER == -1 {
+        if MOST_RECENT_AUTO == -1 {
+            set_text_string(
+                CURRENT_PANE_HANDLE as u64,
+                format!("ID: {}\nInput Latency: Auto\0", CURRENT_ARENA_ID).as_ptr(),
+            );
+        } else {
+            set_text_string(
+                CURRENT_PANE_HANDLE as u64,
+                format!(
+                    "ID: {}\nInput Latency: Auto ({})\0",
+                    CURRENT_ARENA_ID, MOST_RECENT_AUTO
+                )
+                .as_ptr(),
+            )
+        }
+    } else {
+        set_text_string(
+            CURRENT_PANE_HANDLE as u64,
+            format!(
+                "ID: {}\nInput Latency: {}\0",
+                CURRENT_ARENA_ID, CURRENT_INPUT_BUFFER
+            )
+            .as_ptr(),
+        );
+    }
 }
 
 #[skyline::hook(offset = LOC_DRAW.get_offset_in_memory().unwrap())]
@@ -126,7 +125,7 @@ unsafe fn handle_draw_hook(layout: *mut Layout, draw_info: u64, cmd_buffer: u64)
         let root_pane = &mut *(*layout).root_pane;
 
         // TODO: Reevaluate functionality after update to 19.0.0
-        // draw_ui(root_pane);
+        draw_ui(root_pane);
     }
 
     call_original!(layout, draw_info, cmd_buffer);
@@ -187,14 +186,14 @@ unsafe fn ingame_scene_hook(_: &InlineCtx) {
     IS_CSS = false;
 }
 
-unsafe fn _draw_ui(root_pane: &Pane) {
+unsafe fn draw_ui(root_pane: &Pane) {
     let vip_pane_00 = root_pane.find_pane_by_name_recursive("txt_vip_title_00");
     let vip_pane_01 = root_pane.find_pane_by_name_recursive("txt_vip_title_01");
 
-    if _ORIG_VIP_TEXT.is_empty() {
+    if ORIG_VIP_TEXT.is_empty() {
         match (vip_pane_00, vip_pane_01) {
             (Some(x), _) | (_, Some(x)) => {
-                _ORIG_VIP_TEXT = dbg!(String::from_utf16(std::slice::from_raw_parts(
+                ORIG_VIP_TEXT = dbg!(String::from_utf16(std::slice::from_raw_parts(
                     x.as_textbox().text_buf as *mut u16,
                     x.as_textbox().text_buf_len as usize,
                 ))
@@ -212,12 +211,12 @@ unsafe fn _draw_ui(root_pane: &Pane) {
                 format!("Input Latency: Auto ({})", MOST_RECENT_AUTO)
             }
         } else {
-            _ORIG_VIP_TEXT.clone()
+            ORIG_VIP_TEXT.clone()
         };
 
         [x, y]
             .into_iter()
-            .for_each(|e| e.as_textbox().set_text_string(s.as_str()));
+            .for_each(|e| set_text_string(e as *mut Pane as u64, s.as_str().as_ptr()));
     }
 }
 
