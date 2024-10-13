@@ -1,6 +1,6 @@
 [package]
 name = "latency-slider-de"
-version = "0.3.0"
+version = "0.3.1"
 authors = []
 edition = "2021"
 
