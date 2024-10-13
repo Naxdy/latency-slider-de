@@ -1,5 +1,7 @@
 #![feature(restricted_std)]
 
+use std::path::Path;
+
 use offsets::{
     LOC_DISPLAY_CSS, LOC_DRAW, LOC_INGAME_SCENE, LOC_MAIN_MENU_SCENE,
     LOC_MELEE_NORMAL_SEQUENCE_SCENE, LOC_ONLINE_MELEE_ANY_SCENE, LOC_SET_ONLINE_LATENCY,
@@ -10,6 +12,11 @@ use skyline::nn::ui2d::{Layout, Pane};
 use smash::ui2d::SmashPane;
 
 mod offsets;
+
+const TRAINING_MODPACK_LOCATION: &str =
+    "sd:/atmosphere/contents/01006A800016E000/romfs/skyline/plugins/libtraining_modpack.nro";
+
+const DONTANNOYME_LOCATION: &str = "sd:/dontannoyme.txt";
 
 #[skyline::from_offset(0x37a1f10)]
 unsafe fn set_text_string(pane: u64, string: *const u8);
@@ -229,7 +236,6 @@ pub fn main() {
         LOC_UPDATE_CSS,
         LOC_SET_ROOM_ID,
         LOC_DISPLAY_CSS,
-        LOC_DRAW,
         LOC_SET_ONLINE_LATENCY,
         LOC_INGAME_SCENE,
         LOC_ONLINE_MELEE_ANY_SCENE,
@@ -241,12 +247,35 @@ pub fn main() {
             non_hdr_update_room_hook,
             non_hdr_set_online_latency,
             update_css_hook,
-            handle_draw_hook,
             display_css_hook,
             melee_normal_sequence_scene_hook,
             main_menu_scene_hook,
             online_melee_any_scene_hook,
             ingame_scene_hook
         );
+    }
+
+    // only hook draw if training mode modpack doesn't exist
+    if Path::new(TRAINING_MODPACK_LOCATION).exists() {
+        if !Path::new(DONTANNOYME_LOCATION).exists() {
+            skyline::error::show_error(
+            69420,
+            "Latency Slider DE will run with reduced features.\0",
+            format!("{}\n\n{}\n\n{}\n\n{}\n\n{}\n\n{}\0",
+            "Latency Slider DE has detected the presence of the Ultimate Training Modpack in your plugins folder.",
+            "Due to conflicting functionality, Latency Slider DE will NOT be able to display your desired latency on the quickplay / Elite Smash screen.",
+            "The mod will remain fully functional otherwise, and you will still be able to see your desired latency in arenas, which will carry over to all online modes (including quickplay / Elite).",
+            "You can also still \"blindly\" adjust your desired latency on any character select screen, even if the latency is not displayed.",
+            "If you wish to see your latency on the quickplay / Elite Smash screen again, you will have to (temporarily) remove / disable the Ultimate Training Modpack.",
+            "If you don't want to see this message ever again, create an empty file named \"dontannoyme.txt\" and place it in the root (the topmost) folder of your SD card."
+            ).as_str()
+        );
+        } else {
+            println!(
+                "[latency-slider-de] NOT enabling draw hook; user doesn't wish to be informed."
+            )
+        }
+    } else if ensure_hooks!(LOC_DRAW) {
+        skyline::install_hooks!(handle_draw_hook);
     }
 }
