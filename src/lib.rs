@@ -211,11 +211,11 @@ unsafe fn draw_ui(root_pane: &Pane) {
     } else if let (Some(x), Some(y)) = (vip_pane_00, vip_pane_01) {
         let s = if !STEALTH_MODE {
             if CURRENT_INPUT_BUFFER != -1 {
-                format!("Input Latency: {}", CURRENT_INPUT_BUFFER)
+                format!("Input Latency: {}\0", CURRENT_INPUT_BUFFER)
             } else if MOST_RECENT_AUTO == -1 {
-                "Input Latency: Auto".to_string()
+                "Input Latency: Auto\0".to_string()
             } else {
-                format!("Input Latency: Auto ({})", MOST_RECENT_AUTO)
+                format!("Input Latency: Auto ({})\0", MOST_RECENT_AUTO)
             }
         } else {
             ORIG_VIP_TEXT.clone()
