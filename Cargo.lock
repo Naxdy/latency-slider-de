@@ -20,6 +20,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "latency-slider-de"
+version = "0.3.2"
+dependencies = [
+ "ninput",
+ "once_cell",
+ "skyline 0.2.1 (git+https://github.com/ultimate-research/skyline-rs.git)",
+ "skyline_smash",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -68,6 +78,12 @@ checksum = "df4385052e8e8252e9a6b87282f74e94fca6ab074cdc1415d4ad5c4cc3920fe3"
 dependencies = [
  "libc-nnsdk 0.3.0",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.20.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 
 [[package]]
 name = "paste"
@@ -166,12 +182,3 @@ name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
-
-[[package]]
-name = "zlatency-slider-de"
-version = "0.2.4"
-dependencies = [
- "ninput",
- "skyline 0.2.1 (git+https://github.com/ultimate-research/skyline-rs.git)",
- "skyline_smash",
-]
