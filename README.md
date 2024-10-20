@@ -32,6 +32,15 @@ You will need a moddable switch with atmosphere already installed on it. If you 
 
 Congratulations, Smash Ultimate online is now actually playable!
 
+### What is `liblatency_slider_de_classic.nro`?
+
+The "classic" version of the plugin is closer to the original latency slider in functionality:
+
+- You can only see and adjust your desired latency in arenas, D-pad inputs on any CSS are ignored.
+- The latency you select in arenas carries over to all gamemodes, including quickplay / elite.
+
+The reason you'd pick classic over mainline is mod compatibility. Because it's much more barebones, it has a higher chance of being compatible with big, complex mods like the CSK collection. If you don't have any issues with mod compatibility however, there is no reason to use "classic" over the regular version.
+
 ## Building
 
 The project can be reproducibly built using only the Nix package manager.
@@ -88,13 +97,21 @@ NO. These essentially do the same thing but differently, running multiple of the
 
 #### Is this mod compatible with the VSync mod?
 
-The VSync mod, aka "1 frame less delay", aka `less-delay` is compatible with this mod. I maintain a repo for that one as well, over here: https://github.com/xNaxdy/less-delay
+The VSync mod, aka "1 frame less delay", aka `less-delay` is compatible with this mod. I maintain a repo for that one as well, over here: https://github.com/Naxdy/less-delay
+
+#### Is this mod compatible with the Ultimate Training Modpack?
+
+Yesn't. Both Latency Slider DE and the Ultimate Training Modpack attempt to hook the game's `draw` function, by trying to find its signature. The thing is, once one of the mods hooks that function, its signature changes, so whichever mod is loaded _second_ will fail to find that function. Therefore, if Latency Slider DE detects that you have Ultimate Training Modpack installed, it will display a warning message letting you know that it will run with reduced functionality in order to avoid crashing the game, making it so that it will not be able to display the input latency on the character select screen in Elite Smash.
+
+It will, however, remain fully functional otherwise (including applying your selected latency in all online modes), and you will still be able to select your desired latency in arenas, as well as adjust it "blindly" on any CSS.
 
 #### Is this mod compatible with [insert other mod here]?
 
 Don't know, don't care. SSBU modding is kind of like chemistry, except you don't know the chemicals you're using. Any concoction has the chance to blow up in your face. The answer is: Try it. If it works, great. If not, you'll have to pick which mod you want enabled.
 
 I _highly_ suggest using a mod manager of some sort to enable / disable mods as you need, to avoid potential complications.
+
+There's also the `liblatency_slider_classic.nro` version of the plugin, which is a more barebones build, closer in functionality of the original latency slider (with the exception that it too works in all online modes). Because it is more barebones, there's a higher chance that it may work together with mods that present issues with the mainline latency slider.
 
 Unfortunately I can't really invest any time into ensuring that latency-slider-de is compatible with each and every mod out there. However, if you submit a PR that improves compatibility with other mods, I will happily accept it!
 
@@ -107,6 +124,14 @@ When it comes to online tournaments, for those without prizes my views are the s
 Additionally, even without latency slider, there are mods (software and hardware) you can use to reduce your input delay when playing with others (both on quickplay and in arenas). `less-delay` just shaves off 1 frame of input delay no matter the game mode (even offline), and there are 3rd party GC adapters that, at best, improve input delay by another frame and, at worst, make the controller input delay much more consistent than the OG.
 
 The bottom line here is that online tournaments have never been - and will never be - "fair", and if there's a will to cheat, there's a way (even without this mod). Unless you can ensure a 100% stable connection, equal and consistent input delay for both parties, and proctor all players to ensure they aren't using any special hardware to improve their play, this entire discussion is pointless to me.
+
+#### Did you steal the source code of this plugin?
+
+No. This project's source code has been licensed under the AGPL by the original authors, which is a license that grants everyone the right to view, modify, and redistribute the project's source code, so long as the original license is preserved. See [this project's license](./LICENSE), as well as [the license for HDR](https://github.com/HDR-Development/HewDraw-Remix/blob/pre-release/LICENSE) - the project this functionality was originally developed for.
+
+I would also like to stress at this point that the AGPL regards "network interaction" as "distribution", meaning that if you download the source code for this plugin, modify it locally, and then use it to play online with others, you _have_ to publish your modifications to the source code, otherwise you are in violation of the license. According to section 13 of the [license](./LICENSE):
+
+> Notwithstanding any other provision of this License, if you modify the Program, your modified version must prominently offer all users interacting with it remotely through a computer network (if your version supports such interaction) an opportunity to receive the Corresponding Source of your version by providing access to the Corresponding Source from a network server at no charge, through some standard or customary means of facilitating copying of software. This Corresponding Source shall include the Corresponding Source for any work covered by version 3 of the GNU General Public License that is incorporated pursuant to the following paragraph.
 
 ## Final Note
 

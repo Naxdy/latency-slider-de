@@ -118,11 +118,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1728550495,
-        "narHash": "sha256-oXuJVYVaFmXBS0k3fZJWdOSpGpFiUjhKzh8G8kejvoU=",
+        "lastModified": 1729419431,
+        "narHash": "sha256-Gt2hv1Gqly/IMBmaay43yxE3+BgHmNKUtd15NXJhp90=",
         "owner": "Naxdy",
         "repo": "nix-skyline-rs",
-        "rev": "19f12da0648c066cd894c44860ba5f6de17b628b",
+        "rev": "3affcb6a21193fdc75e323e78e408f8d5ec66338",
         "type": "github"
       },
       "original": {
