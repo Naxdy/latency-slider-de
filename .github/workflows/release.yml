@@ -1,0 +1,54 @@
+name: Nix CD
+
+on:
+  push:
+    branches:
+      - "master"
+
+concurrency:
+  group: "${{ github.head_ref }}"
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: "Publish Stable Release"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Check
+        run: |
+          nix flake check --print-build-logs -j auto
+
+      - name: "Determine release"
+        id: det-rel
+        run: |
+          version=$(nix flake eval .#packages.x86_64-linux.default.version --raw)
+
+          if [$(git tag -l "$version")]; then
+            echo "releasever=$version" >> $GITHUB_OUTPUT
+          else
+            echo "releasever=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: "Build Release"
+        if: steps.det-rel.outputs.releasever != 'none'
+        run: |
+          nix build .# --print-build-logs -j auto
+          nix build .#latency-slider-de-classic --print-build-logs -j auto -o result-classic
+
+      - name: "Publish Release"
+        if: steps.det-rel.outputs.releasever != 'none'
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          artifacts: "result/lib/*.nro,result-classic/lib/*.nro"
+          bodyFile: ".github/release_notes/v${{ steps.det-rel.outputs.releasever }}.md"
+          name: "v${{ steps.det-rel.outputs.releasever }}"
+          commit: "${{ github.head_ref }}"
+          tag: "v${{ steps.det-rel.outputs.releasever }}"
