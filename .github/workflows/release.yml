@@ -6,7 +6,7 @@ on:
       - "master"
 
 concurrency:
-  group: "${{ github.head_ref }}"
+  group: "master"
   cancel-in-progress: true
 
 jobs:
@@ -29,12 +29,12 @@ jobs:
       - name: "Determine release"
         id: det-rel
         run: |
-          version=$(nix flake eval .#packages.x86_64-linux.default.version --raw)
+          version=$(nix eval .#packages.x86_64-linux.default.version --raw)
 
-          if [$(git tag -l "$version")]; then
-            echo "releasever=$version" >> $GITHUB_OUTPUT
-          else
+          if [ $(git tag -l "v$version") ]; then
             echo "releasever=none" >> $GITHUB_OUTPUT
+          else
+            echo "releasever=$version" >> $GITHUB_OUTPUT
           fi
 
       - name: "Build Release"
@@ -50,5 +50,5 @@ jobs:
           artifacts: "result/lib/*.nro,result-classic/lib/*.nro"
           bodyFile: ".github/release_notes/v${{ steps.det-rel.outputs.releasever }}.md"
           name: "v${{ steps.det-rel.outputs.releasever }}"
-          commit: "${{ github.head_ref }}"
+          commit: "${{ github.sha }}"
           tag: "v${{ steps.det-rel.outputs.releasever }}"
